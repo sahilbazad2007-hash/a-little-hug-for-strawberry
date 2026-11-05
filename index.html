@@ -22,7 +22,7 @@ h1{animation:titleIn 1.4s ease both}.stage{animation:titleIn 1.6s .15s ease both
 <p>I’m so proud of you, including on the days you don’t feel strong. I wish I could make the distance smaller. For now, <strong>you have my love, my listening ears, and a place in my day, always.</strong></p>
 <p>Be gentle with my favourite girl today, okay? She means so much to me. 🍓</p>
 <div class="signature">All my love, Marshy ♡</div><div class="sign-sub">One little strawberry. So very loved.</div></article><div class="caption">If I could send a hug through a screen, it would look like this.</div></div>
-<section class="music" aria-label="A song for you"><div class="music-top"><div class="disc" aria-hidden="true">♫</div><div class="track"><strong>2 of Us</strong><span>Barney Sku · a little moment for you · 0:10 to the end</span></div><button class="play" id="play" aria-label="Play 2 of Us by Barney Sku from 10 seconds">▶</button></div><p id="musicStatus" aria-live="polite">Bringing your song over… ♡</p><div class="player-wrap visible" id="playerWrap"><div id="player"></div></div><a class="fallback visible" id="fallback" href="https://www.youtube.com/watch?v=rBUEg6QF5ME&t=10s" target="_blank" rel="noopener">Song not loading? Open it on YouTube at 0:10 ↗</a></section>
+<section class="music" aria-label="A song for you"><div class="music-top"><div class="disc" aria-hidden="true">♫</div><div class="track"><strong>Dandelions</strong><span>Ruth B. · a little moment for you · 0:25 to the end</span></div><button class="play" id="play" aria-label="Play Dandelions from 25 seconds">▶</button></div><p id="musicStatus" aria-live="polite">A little song for you. Tap play if your phone asks. ♡</p><audio id="loveAudio" preload="auto" src="./dandelions.mp3#t=25"></audio></section>
 <section class="garden" id="garden" aria-label="A bouquet from Marshy"><div class="eyebrow">Special delivery, just for you</div><h2>Flowers for my favourite girl.</h2><p class="garden-copy">I sent a tiny friend with a very big bouquet.<br>He has something he wants to give you…</p><div class="teddy-scene"><svg viewBox="0 0 520 475" role="img" aria-labelledby="teddyTitle"><title id="teddyTitle">A smiling teddy bear offering Strawberry a bouquet of roses, sunflowers, tulips, hydrangeas, and fluffy baby's breath.</title><defs><radialGradient id="fur"><stop stop-color="#d8b38b"/><stop offset="1" stop-color="#bc8d65"/></radialGradient><radialGradient id="muzzle"><stop stop-color="#fff1d9"/><stop offset="1" stop-color="#ecd1ac"/></radialGradient></defs>
 <ellipse cx="260" cy="431" rx="146" ry="17" fill="#dab9ad" opacity=".24"/>
 <g class="teddy-arrival"><ellipse cx="260" cy="321" rx="96" ry="107" fill="url(#fur)"/><ellipse cx="260" cy="331" rx="63" ry="77" fill="#e7c9a4"/>
@@ -39,15 +39,19 @@ h1{animation:titleIn 1.4s ease both}.stage{animation:titleIn 1.6s .15s ease both
 <button class="hug" id="hug">A little extra hug? &nbsp; ♡</button><p id="hugNote" aria-live="polite">There’s always one here with your name on it.</p>
 </main><footer>Somewhere under the same sky, I’m thinking of you. ♡</footer>
 <script>
-const VIDEO='rBUEg6QF5ME',START=10;
-let player,ready=false,playing=false,started=false,ended=false;
-const play=document.getElementById('play'),statusText=document.getElementById('musicStatus');
-function showTap(){if(!playing){statusText.textContent='Tap the heart of this page, or press play, to hear your song. ♡';play.textContent='▶';play.setAttribute('aria-label','Play 2 of Us by Barney Sku from 10 seconds')}}
-function start(){if(!ready)return;player.unMute();player.setVolume(65);if(ended){player.seekTo(START,true);ended=false}player.playVideo()}
-window.onYouTubeIframeAPIReady=function(){player=new YT.Player('player',{width:'400',height:'210',videoId:VIDEO,playerVars:{playsinline:1,start:START,autoplay:1,rel:0,controls:1,origin:location.origin},events:{onReady:()=>{ready=true;start();setTimeout(showTap,2500)},onAutoplayBlocked:showTap,onStateChange:e=>{if(e.data===1){playing=true;started=true;play.textContent='Ⅱ';play.setAttribute('aria-label','Pause song');statusText.textContent='Playing 2 of Us · a little love, from Marshy. ♡'}else if(e.data===0){playing=false;ended=true;play.textContent='↻';play.setAttribute('aria-label','Replay song from 10 seconds');statusText.textContent='All my love, for you. Tap to listen again. ♡'}else if(e.data===2){playing=false;play.textContent='▶';play.setAttribute('aria-label','Resume song');statusText.textContent='Your song is paused. Tap play whenever you like. ♡'}},onError:()=>{statusText.textContent='The song couldn’t play here. Open it on YouTube below. ♡';play.textContent='↻'}}})};
-play.addEventListener('click',()=>{if(playing){player.pauseVideo()}else start()});
-document.addEventListener('pointerdown',e=>{if(!started&&ready&&!play.contains(e.target))start()});
-const musicScript=document.createElement('script');musicScript.src='https://www.youtube.com/iframe_api';musicScript.onerror=()=>{statusText.textContent='Open your song on YouTube below. ♡'};document.head.appendChild(musicScript);
+const START=25;
+const audio=document.getElementById('loveAudio'),play=document.getElementById('play'),statusText=document.getElementById('musicStatus');
+let initialized=false,finished=false,hasPlayed=false;
+function setStart(){if(!initialized&&audio.readyState>=1){audio.currentTime=START;initialized=true}}
+audio.addEventListener('loadedmetadata',setStart);
+async function startSong(){try{setStart();if(finished){audio.currentTime=START;finished=false}await audio.play()}catch(error){statusText.textContent='Tap play to hear your song, sweetheart. ♡'}}
+audio.addEventListener('play',()=>{hasPlayed=true;play.textContent='Ⅱ';play.setAttribute('aria-label','Pause Dandelions');statusText.textContent='Playing Dandelions · a little love, from Marshy. ♡'});
+audio.addEventListener('pause',()=>{if(!audio.ended){play.textContent='▶';play.setAttribute('aria-label','Resume Dandelions');statusText.textContent='Your song is paused. Tap play whenever you like. ♡'}});
+audio.addEventListener('ended',()=>{finished=true;play.textContent='↻';play.setAttribute('aria-label','Replay Dandelions from 25 seconds');statusText.textContent='All my love, for you. Tap to listen again. ♡'});
+audio.addEventListener('error',()=>{statusText.textContent='The song couldn’t load. Refresh the page and try again. ♡'});
+play.addEventListener('click',()=>{if(audio.paused)startSong();else audio.pause()});
+document.addEventListener('pointerdown',e=>{if(!hasPlayed&&!play.contains(e.target))startSong()});
+startSong();
 const hugs=['Come here, Strawberry. The biggest, warmest hug for you. 🍓','You can miss home and still make a beautiful life where you are. ♡','You don’t have to explain every feeling. I’m here to listen. ♡','Rest those lovely eyes for a moment. One thing at a time, sweetheart.','A small reminder: you are very, very loved. 🍓'];let hugCount=0;document.getElementById('hug').addEventListener('click',()=>{document.getElementById('hugNote').textContent=hugs[hugCount++%hugs.length];for(let i=0;i<9;i++){const heart=document.createElement('span');heart.className='float';heart.setAttribute('aria-hidden','true');heart.textContent=i%3===0?'🍓':'♡';heart.style.left=(12+Math.random()*76)+'%';heart.style.color='#ba6b82';heart.style.animationDelay=(i*.07)+'s';document.body.appendChild(heart);setTimeout(()=>heart.remove(),4000)}});
 
 const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
